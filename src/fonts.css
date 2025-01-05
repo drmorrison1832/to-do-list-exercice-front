@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "Hack-Reg"; /* <== On donne un nom unique */
+  src: url("./assets/fonts/Hack-Regular.ttf") format("truetype");
+  /* <== On donne l'emplacement du fichier de police et on prÃ©cise le format pour Ãªtre sÃ»r que le navigateur ne se trompe pas en le devinant Ã  partir de l'extension du fichier */
+
+  font-weight: normal; /* <== On dÃ©finit le poids de la police */
+  font-style: normal; /* <== On dÃ©finit le style de la police */
+  font-display: swap; /* <== On spÃ©cifie le comportement d'affichage de la police. Ca indique que le navigateur doit afficher une police de secours immÃ©diatement, puis charger la police personnalisÃ©e en arriÃ¨re-plan. */
+}
