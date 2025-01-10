@@ -25,31 +25,10 @@ const App = () => {
   );
 
   // Retrieves data after first render or when mustRetrieve changes state.
-  useEffect(
-    function retrieveTasks() {
-      if (mustRetrieve === true) {
-        console.log("App: retrieveTasks...", new Date().getMilliseconds());
-        axios
-          .get("http://localhost:3000/")
-          .then((response) => {
-            setMustRetrieve(false);
-            console.log(
-              'App: retrieveTasks: mustRetrieve set to "false"',
-              new Date().getMilliseconds()
-            );
-            setTasks(response.data);
-            console.log(
-              "App: retrieveTasks: tasks retrieved from server",
-              new Date().getMilliseconds()
-            );
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
-    },
-    [mustRetrieve]
-  );
+
+  useEffect(() => {
+    retrieveTasks();
+  }, [mustRetrieve]);
 
   // Sends Axios request to server depending on taskToUpdate state
   useEffect(
@@ -81,56 +60,77 @@ const App = () => {
     [taskToUpdate]
   );
 
-  function postNewTask() {
-    console.log("App: postNewTask...", new Date().getMilliseconds());
-    axios
-      .post("http://localhost:3000/", taskToUpdate)
-      .then((response) => {
-        setMustRetrieve(true);
-      })
-      .catch((error) => {
+  // Axios functions
+
+  async function retrieveTasks() {
+    if (mustRetrieve === true) {
+      try {
+        console.log("App: retrieveTasks...", new Date().getMilliseconds());
+        const response = await axios.get("http://localhost:3000/");
+        console.log(
+          "App: retrieveTasks: tasks retrieved from server",
+          new Date().getMilliseconds()
+        );
+        setTasks(response.data);
+
+        console.log(
+          'App: retrieveTasks: mustRetrieve set to "false"',
+          new Date().getMilliseconds()
+        );
+        setMustRetrieve(false);
+      } catch (error) {
         console.error(error);
-      });
+      }
+    }
+  }
+
+  async function postNewTask() {
+    console.log("App: postNewTask...", new Date().getMilliseconds());
+    await axios.post("http://localhost:3000/", taskToUpdate);
+
+    setMustRetrieve(true);
     setTaskToUpdate({});
+
     console.log(
       "App: postNewTask: taskToUpdate set to {}",
       new Date().getMilliseconds()
     );
   }
 
-  function updateExistingTask() {
+  async function updateExistingTask() {
     console.log("App: updateExistingTask...", new Date().getMilliseconds());
-    axios
-      .put("http://localhost:3000/", taskToUpdate)
-      .then((response) => {
-        setMustRetrieve(true);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    setTaskToUpdate({});
-    console.log(
-      "App: updateExistingTask: taskToUpdate set to {}",
-      new Date().getMilliseconds()
-    );
+
+    try {
+      await axios.put("http://localhost:3000/", taskToUpdate);
+
+      setTaskToUpdate({});
+      setMustRetrieve(true);
+
+      console.log(
+        "App: updateExistingTask: taskToUpdate set to {}",
+        new Date().getMilliseconds()
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  function deleteTask() {
+  async function deleteTask() {
     console.log("App: deleteTask...");
 
-    axios
-      .delete(`http://localhost:3000/${taskToUpdate._id}`)
-      .then((response) => {
-        setMustRetrieve(true);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    setTaskToUpdate({});
-    console.log(
-      "App: deleteTask: taskToUpdate set to {}",
-      new Date().getMilliseconds()
-    );
+    try {
+      await axios.delete(`http://localhost:3000/${taskToUpdate._id}`);
+
+      setTaskToUpdate({});
+      setMustRetrieve(true);
+
+      console.log(
+        "App: deleteTask: taskToUpdate set to {}",
+        new Date().getMilliseconds()
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   console.log("App: rendering...", new Date().getMilliseconds());
